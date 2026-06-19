@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { asyncHandler } from "../middleware/asyncHandler";
 import { authMiddleware } from "../middleware/auth";
+import { rateLimit } from "../middleware/rateLimit";
 import * as adminController from "../controllers/admin.controller";
 
 export const adminRouter = Router();
 
-adminRouter.post("/admin/login", asyncHandler(adminController.login));
+const loginRateLimit = rateLimit({ windowMs: 15 * 60 * 1000, max: 10 });
+
+adminRouter.post("/admin/login", loginRateLimit, asyncHandler(adminController.login));
 
 adminRouter.use(authMiddleware);
 

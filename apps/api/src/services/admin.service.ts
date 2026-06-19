@@ -21,18 +21,18 @@ const SESSION_INCLUDE = { eventType: true, createdBy: true } as const;
 
 // ── Auth ─────────────────────────────────────────────────────────
 
+// Used to keep login's response time constant whether or not the email
+// exists, so timing can't be used to enumerate admin accounts.
+const DUMMY_PASSWORD_HASH = bcrypt.hashSync("not-a-real-password", 10);
+
 export async function login(email: unknown, password: unknown) {
   if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
     throw new HttpError(400, "email and password are required.");
   }
 
   const admin = await prisma.admin.findUnique({ where: { email } });
-  if (!admin) {
-    throw new HttpError(401, "Invalid credentials.");
-  }
-
-  const valid = await bcrypt.compare(password, admin.passwordHash);
-  if (!valid) {
+  const valid = await bcrypt.compare(password, admin?.passwordHash ?? DUMMY_PASSWORD_HASH);
+  if (!admin || !valid) {
     throw new HttpError(401, "Invalid credentials.");
   }
 

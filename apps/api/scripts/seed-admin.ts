@@ -1,10 +1,10 @@
+import { randomBytes } from "node:crypto";
 import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/prisma";
 
 const DEFAULT_ADMIN = {
   name: "YAYA Admin",
   email: "admin@gpa-yaya.com",
-  password: "changeme123",
 };
 
 async function main() {
@@ -14,7 +14,8 @@ async function main() {
     return;
   }
 
-  const passwordHash = await bcrypt.hash(DEFAULT_ADMIN.password, 10);
+  const password = randomBytes(18).toString("base64url");
+  const passwordHash = await bcrypt.hash(password, 10);
   const admin = await prisma.admin.create({
     data: {
       name: DEFAULT_ADMIN.name,
@@ -23,8 +24,8 @@ async function main() {
     },
   });
 
-  console.log(`Created default admin: ${admin.email} / ${DEFAULT_ADMIN.password}`);
-  console.log("Change this password after first login.");
+  console.log(`Created default admin: ${admin.email} / ${password}`);
+  console.log("This password is shown once — store it now. Change it after first login.");
 }
 
 main().finally(() => prisma.$disconnect());
