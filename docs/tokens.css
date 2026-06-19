@@ -1,0 +1,299 @@
+/*
+ * YAYA Attendance — Design Tokens
+ * Palette: Gold & Noir
+ * Version: 1.0
+ *
+ * Usage: import this file once at the root of your Next.js app
+ * e.g. in app/globals.css → @import './tokens.css';
+ *
+ * All spacing, color, typography, radius, shadow, and z-index
+ * decisions live here. Never hardcode a color or font-size
+ * elsewhere — always reference a token.
+ */
+
+:root {
+
+  /* ─────────────────────────────────────────
+   * COLOR — RAW PALETTE
+   * These are the named source values.
+   * Prefer semantic tokens below over raw values.
+   * ───────────────────────────────────────── */
+
+  --color-navy-950:  #060D14;
+  --color-navy-900:  #0D1B2A;   /* Primary brand color — shield navy  */
+  --color-navy-800:  #162436;
+  --color-navy-700:  #1E2F44;
+  --color-navy-600:  #2A3F57;
+  --color-navy-200:  #9AAFC6;
+  --color-navy-100:  #C8D6E5;
+  --color-navy-50:   #EBF0F6;
+
+  --color-gold-700:  #8B6914;   /* Dark gold — text on light surfaces  */
+  --color-gold-600:  #A67E1A;
+  --color-gold-500:  #C9A84C;   /* Crown gold — primary accent          */
+  --color-gold-400:  #D4B96A;
+  --color-gold-200:  #EDD99A;
+  --color-gold-100:  #F5ECCC;
+  --color-gold-50:   #FAF5E4;
+
+  --color-parchment: #F8F4EE;   /* Warm off-white background             */
+  --color-white:     #FFFFFF;
+
+  --color-green-700: #1A4731;
+  --color-green-600: #2D6A4F;   /* Success — attendance confirmed        */
+  --color-green-100: #C6E8D8;
+  --color-green-50:  #EAF5EF;
+
+  --color-red-700:   #922B21;
+  --color-red-600:   #C0392B;   /* Alert — errors, absent, closed        */
+  --color-red-100:   #F5C6C2;
+  --color-red-50:    #FDECEA;
+
+  --color-ink-900:   #0D1B2A;   /* Alias — body text on light bg         */
+  --color-ink-700:   #2C3E50;
+  --color-ink-500:   #5A6A7A;   /* Muted / secondary text                */
+  --color-ink-300:   #8B9AAD;   /* Placeholder / disabled text           */
+  --color-ink-100:   #DDE3EA;   /* Subtle borders                        */
+  --color-ink-50:    #F4F6F8;   /* Alternate surface                     */
+
+
+  /* ─────────────────────────────────────────
+   * COLOR — SEMANTIC TOKENS
+   * Use these in components, never raw values.
+   * ───────────────────────────────────────── */
+
+  /* Backgrounds */
+  --bg-page:         var(--color-parchment);   /* Page / app shell bg    */
+  --bg-surface:      var(--color-white);        /* Cards, inputs, modals  */
+  --bg-surface-alt:  var(--color-ink-50);       /* Zebra rows, sub-panels */
+  --bg-brand:        var(--color-navy-900);     /* Headers, sidebar, nav  */
+  --bg-brand-hover:  var(--color-navy-800);
+  --bg-accent:       var(--color-gold-500);     /* Primary CTA bg         */
+  --bg-accent-hover: var(--color-gold-400);
+  --bg-success:      var(--color-green-50);
+  --bg-error:        var(--color-red-50);
+  --bg-overlay:      rgba(13, 27, 42, 0.55);   /* Modal scrim            */
+
+  /* Text */
+  --text-primary:    var(--color-navy-900);     /* Headlines, body        */
+  --text-secondary:  var(--color-ink-500);      /* Labels, captions       */
+  --text-tertiary:   var(--color-ink-300);      /* Placeholder, disabled  */
+  --text-on-brand:   var(--color-white);        /* Text on navy surfaces  */
+  --text-on-accent:  var(--color-navy-900);     /* Text on gold button    */
+  --text-accent:     var(--color-gold-700);     /* Gold text on light bg  */
+  --text-success:    var(--color-green-600);
+  --text-error:      var(--color-red-600);
+  --text-link:       var(--color-gold-600);
+
+  /* Borders */
+  --border-default:  var(--color-ink-100);      /* Input, card borders    */
+  --border-subtle:   rgba(13, 27, 42, 0.08);   /* Very faint dividers    */
+  --border-strong:   var(--color-navy-600);     /* Emphasis borders       */
+  --border-accent:   var(--color-gold-500);     /* Focus rings, active    */
+  --border-success:  var(--color-green-600);
+  --border-error:    var(--color-red-600);
+
+  /* Interactive states */
+  --focus-ring:      0 0 0 3px rgba(201, 168, 76, 0.35);
+  --focus-ring-error: 0 0 0 3px rgba(192, 57, 43, 0.25);
+
+
+  /* ─────────────────────────────────────────
+   * TYPOGRAPHY
+   * ───────────────────────────────────────── */
+
+  /* Font families */
+  --font-display:  'Fraunces', Georgia, serif;   /* Emotional moments: welcome screens, confirmations */
+  --font-body:     'Manrope', system-ui, sans-serif; /* All UI: labels, inputs, tables, buttons       */
+  --font-mono:     'JetBrains Mono', 'Fira Code', monospace; /* Codes, tokens if ever shown           */
+
+  /* Font sizes — mobile-first, unitless scale */
+  --text-xs:    0.6875rem;   /*  11px — micro labels, timestamps     */
+  --text-sm:    0.75rem;     /*  12px — captions, table cells        */
+  --text-base:  0.875rem;    /*  14px — body copy, input values      */
+  --text-md:    1rem;        /*  16px — primary body                 */
+  --text-lg:    1.125rem;    /*  18px — section headings             */
+  --text-xl:    1.375rem;    /*  22px — page titles                  */
+  --text-2xl:   1.75rem;     /*  28px — display / confirmation name  */
+  --text-3xl:   2.25rem;     /*  36px — hero moments (rare)          */
+
+  /* Font weights */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+
+  /* Line heights */
+  --leading-tight:  1.25;
+  --leading-snug:   1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* Letter spacing */
+  --tracking-tight:  -0.01em;
+  --tracking-normal:  0;
+  --tracking-wide:    0.04em;   /* Uppercase micro-labels */
+  --tracking-wider:   0.08em;
+
+
+  /* ─────────────────────────────────────────
+   * SPACING
+   * Base unit: 4px. All values are multiples.
+   * ───────────────────────────────────────── */
+
+  --space-1:   0.25rem;   /*  4px  */
+  --space-2:   0.5rem;    /*  8px  */
+  --space-3:   0.75rem;   /* 12px  */
+  --space-4:   1rem;      /* 16px  */
+  --space-5:   1.25rem;   /* 20px  */
+  --space-6:   1.5rem;    /* 24px  */
+  --space-8:   2rem;      /* 32px  */
+  --space-10:  2.5rem;    /* 40px  */
+  --space-12:  3rem;      /* 48px  */
+  --space-16:  4rem;      /* 64px  */
+
+
+  /* ─────────────────────────────────────────
+   * BORDER RADIUS
+   * ───────────────────────────────────────── */
+
+  --radius-sm:   4px;    /* Badges, small pills          */
+  --radius-md:   8px;    /* Inputs, buttons, small cards */
+  --radius-lg:   12px;   /* Cards, panels                */
+  --radius-xl:   16px;   /* Modal sheets, bottom drawers */
+  --radius-2xl:  24px;   /* Phone frames, large surfaces */
+  --radius-full: 9999px; /* Pills, avatars, dot tags     */
+
+
+  /* ─────────────────────────────────────────
+   * SHADOWS
+   * Kept minimal — only functional shadows.
+   * ───────────────────────────────────────── */
+
+  --shadow-none:   none;
+  --shadow-sm:     0 1px 3px rgba(13, 27, 42, 0.08);   /* Cards on light bg  */
+  --shadow-md:     0 4px 12px rgba(13, 27, 42, 0.10);  /* Dropdowns, popovers */
+  --shadow-focus:  var(--focus-ring);
+
+
+  /* ─────────────────────────────────────────
+   * Z-INDEX
+   * ───────────────────────────────────────── */
+
+  --z-base:    0;
+  --z-raised:  10;    /* Sticky headers          */
+  --z-dropdown: 100;  /* Dropdowns, tooltips     */
+  --z-modal:   200;   /* Modal overlays          */
+  --z-toast:   300;   /* Toast notifications     */
+
+
+  /* ─────────────────────────────────────────
+   * TRANSITIONS
+   * ───────────────────────────────────────── */
+
+  --transition-fast:   100ms ease;
+  --transition-base:   175ms ease;
+  --transition-slow:   300ms ease;
+  --transition-bounce: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+
+  /* ─────────────────────────────────────────
+   * COMPONENT-SPECIFIC TOKENS
+   * Composed from semantic tokens above.
+   * ───────────────────────────────────────── */
+
+  /* Header / nav bar */
+  --header-bg:          var(--bg-brand);
+  --header-text:        var(--text-on-brand);
+  --header-text-muted:  rgba(255, 255, 255, 0.5);
+  --header-border:      rgba(255, 255, 255, 0.08);
+  --header-logo-bg:     var(--color-gold-500);
+  --header-logo-text:   var(--color-navy-900);
+
+  /* Buttons — primary */
+  --btn-primary-bg:        var(--bg-accent);
+  --btn-primary-bg-hover:  var(--bg-accent-hover);
+  --btn-primary-text:      var(--text-on-accent);
+  --btn-primary-radius:    var(--radius-md);
+
+  /* Buttons — secondary (ghost) */
+  --btn-secondary-bg:        transparent;
+  --btn-secondary-bg-hover:  var(--color-ink-50);
+  --btn-secondary-text:      var(--text-primary);
+  --btn-secondary-border:    var(--border-default);
+
+  /* Buttons — brand (navy) */
+  --btn-brand-bg:        var(--bg-brand);
+  --btn-brand-bg-hover:  var(--bg-brand-hover);
+  --btn-brand-text:      var(--text-on-brand);
+
+  /* Inputs */
+  --input-bg:            var(--bg-surface);
+  --input-border:        var(--border-default);
+  --input-border-focus:  var(--border-accent);
+  --input-border-error:  var(--border-error);
+  --input-text:          var(--text-primary);
+  --input-placeholder:   var(--text-tertiary);
+  --input-radius:        var(--radius-md);
+  --input-padding-x:     var(--space-3);
+  --input-padding-y:     var(--space-2);
+
+  /* Cards */
+  --card-bg:       var(--bg-surface);
+  --card-border:   var(--border-default);
+  --card-radius:   var(--radius-lg);
+  --card-padding:  var(--space-4) var(--space-5);
+
+  /* Event / session tags */
+  --tag-bg:      rgba(201, 168, 76, 0.12);
+  --tag-border:  rgba(201, 168, 76, 0.35);
+  --tag-text:    var(--color-gold-700);
+  --tag-dot:     var(--color-gold-500);
+
+  /* Department pills */
+  --pill-bg:           var(--bg-surface);
+  --pill-border:       var(--border-default);
+  --pill-text:         var(--text-secondary);
+  --pill-active-bg:    var(--color-navy-900);
+  --pill-active-border: var(--color-navy-900);
+  --pill-active-text:  var(--color-white);
+
+  /* Avatars */
+  --avatar-bg-a:    rgba(201, 168, 76, 0.18);   /* Gold tint   */
+  --avatar-text-a:  var(--color-gold-700);
+  --avatar-bg-b:    rgba(13, 27, 42, 0.10);     /* Navy tint   */
+  --avatar-text-b:  var(--color-navy-900);
+  --avatar-bg-c:    rgba(45, 106, 79, 0.14);    /* Green tint  */
+  --avatar-text-c:  var(--color-green-600);
+
+  /* Status badges */
+  --badge-present-bg:   var(--bg-success);
+  --badge-present-text: var(--text-success);
+  --badge-absent-bg:    var(--bg-error);
+  --badge-absent-text:  var(--text-error);
+
+  /* Confirmation / halo (signature element) */
+  --halo-ring-outer: rgba(201, 168, 76, 0.22);
+  --halo-ring-inner: rgba(201, 168, 76, 0.44);
+  --halo-check-bg:   var(--color-navy-900);
+  --halo-check-icon: var(--color-gold-500);
+
+  /* Admin sidebar */
+  --sidebar-bg:          var(--bg-brand);
+  --sidebar-item-text:   rgba(255, 255, 255, 0.55);
+  --sidebar-item-active-bg:   rgba(201, 168, 76, 0.15);
+  --sidebar-item-active-text: var(--color-gold-400);
+
+  /* Stat cards */
+  --stat-bg:     var(--color-ink-50);
+  --stat-delta:  var(--color-green-600);
+
+  /* Table */
+  --table-header-text:  var(--text-secondary);
+  --table-border:       var(--border-subtle);
+  --table-row-hover:    var(--color-gold-50);
+
+  /* Toast / notification */
+  --toast-bg:      var(--color-navy-900);
+  --toast-text:    var(--color-white);
+  --toast-accent:  var(--color-gold-500);
+}

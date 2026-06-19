@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Member {
+  id              String   @id @default(uuid()) @db.Uuid
+  fullName        String   @map("full_name")
+  phoneNumber     String   @unique @map("phone_number")
+  gender          Gender
+  dateOfBirth     DateTime @map("date_of_birth") @db.Date
+  department      String[]
+  profilePhotoUrl String?  @map("profile_photo_url")
+  deviceToken     String   @unique @map("device_token")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  attendances Attendance[]
+
+  @@map("members")
+}
+
+model Admin {
+  id           String   @id @default(uuid()) @db.Uuid
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  sessions Session[]
+
+  @@map("admins")
+}
+
+model EventType {
+  id                String   @id @default(uuid()) @db.Uuid
+  name              String
+  isRecurring       Boolean  @map("is_recurring")
+  recurrencePattern String?  @map("recurrence_pattern")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  sessions Session[]
+
+  @@map("event_types")
+}
+
+model Session {
+  id          String    @id @default(uuid()) @db.Uuid
+  eventTypeId String    @map("event_type_id") @db.Uuid
+  eventType   EventType @relation(fields: [eventTypeId], references: [id])
+  date        DateTime  @db.Date
+  qrToken     String    @unique @map("qr_token")
+  // No DB-level default: set to 23:59:59 on `date` by the service layer when the session is created.
+  expiresAt   DateTime  @map("expires_at")
+  closedAt    DateTime? @map("closed_at")
+  createdById String    @map("created_by") @db.Uuid
+  createdBy   Admin     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  attendances Attendance[]
+
+  @@map("sessions")
+}
+
+model Attendance {
+  id        String   @id @default(uuid()) @db.Uuid
+  memberId  String   @map("member_id") @db.Uuid
+  member    Member   @relation(fields: [memberId], references: [id])
+  sessionId String   @map("session_id") @db.Uuid
+  session   Session  @relation(fields: [sessionId], references: [id])
+  markedAt  DateTime @default(now()) @map("marked_at")
+
+  @@unique([memberId, sessionId])
+  @@map("attendance")
+}

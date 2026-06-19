@@ -1,0 +1,11 @@
+@import "../../../docs/tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  color: var(--text-primary);
+  background: var(--bg-page);
+  font-family: var(--font-body);
+}
