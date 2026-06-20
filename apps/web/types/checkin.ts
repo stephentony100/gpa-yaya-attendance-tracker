@@ -72,6 +72,10 @@ export interface LinkDeviceResponseData {
   device_token: string;
 }
 
+export interface UploadPhotoResponseData {
+  photo_url: string;
+}
+
 export interface FieldErrors {
   fieldErrors?: Record<string, string>;
   recovery?: boolean;

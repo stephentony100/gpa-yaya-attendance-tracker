@@ -1,11 +1,19 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "../src/lib/prisma";
+
+// Force test-DB routing before prisma.ts (via env.ts) resolves a connection
+// string — this script must never be able to write to the production DB,
+// regardless of how NODE_ENV is set in the invoking shell.
+process.env.NODE_ENV = "test";
 
 async function main() {
+  const { prisma } = await import("../src/lib/prisma");
+
+  const runId = randomUUID();
+
   const admin = await prisma.admin.create({
     data: {
       name: "Test Admin",
-      email: `test-${randomUUID()}@example.com`,
+      email: `test-${runId}@example.com`,
       passwordHash: "x",
     },
   });
@@ -22,7 +30,7 @@ async function main() {
     data: {
       eventTypeId: eventType.id,
       date: today,
-      qrToken: "test-token-123",
+      qrToken: `test-token-${runId}`,
       expiresAt,
       createdById: admin.id,
     },
@@ -32,13 +40,15 @@ async function main() {
     data: {
       eventTypeId: eventType.id,
       date: today,
-      qrToken: "expired-token-456",
+      qrToken: `expired-token-${runId}`,
       expiresAt: new Date(Date.now() - 1000),
       createdById: admin.id,
     },
   });
 
   console.log(JSON.stringify({ session, expiredSession }, null, 2));
+
+  return prisma;
 }
 
-main().finally(() => prisma.$disconnect());
+main().then((prisma) => prisma.$disconnect());

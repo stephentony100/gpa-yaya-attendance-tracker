@@ -6,12 +6,7 @@ import { Prisma } from "../generated/prisma/client";
 import { prisma } from "../lib/prisma";
 import { env } from "../lib/env";
 import { HttpError } from "../lib/errors";
-
-function endOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(23, 59, 59, 999);
-  return d;
-}
+import { endOfDayLagos } from "../lib/datetime";
 
 function buildQrUrl(qrToken: string): string {
   return `${env.FRONTEND_URL}/checkin/${qrToken}`;
@@ -46,6 +41,36 @@ export async function login(email: unknown, password: unknown) {
     token,
     admin: { id: admin.id, name: admin.name, email: admin.email },
   };
+}
+
+export async function changePassword(
+  adminId: string,
+  currentPassword: unknown,
+  newPassword: unknown
+) {
+  if (typeof currentPassword !== "string" || !currentPassword) {
+    throw new HttpError(400, "Validation failed", {
+      fieldErrors: { current_password: "current_password is required." },
+    });
+  }
+  if (typeof newPassword !== "string" || newPassword.length < 8) {
+    throw new HttpError(400, "Validation failed", {
+      fieldErrors: { new_password: "New password must be at least 8 characters." },
+    });
+  }
+
+  const admin = await prisma.admin.findUnique({ where: { id: adminId } });
+  if (!admin) {
+    throw new HttpError(404, "Admin not found.");
+  }
+
+  const valid = await bcrypt.compare(currentPassword, admin.passwordHash);
+  if (!valid) {
+    throw new HttpError(401, "Current password is incorrect.");
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, 10);
+  await prisma.admin.update({ where: { id: adminId }, data: { passwordHash } });
 }
 
 // ── Event types ──────────────────────────────────────────────────
@@ -139,7 +164,7 @@ export async function createSession(adminId: string, body: unknown) {
       eventTypeId,
       date,
       qrToken: nanoid(12),
-      expiresAt: endOfDay(date),
+      expiresAt: endOfDayLagos(date),
       createdById: adminId,
     },
     include: SESSION_INCLUDE,
@@ -154,7 +179,13 @@ export async function getSessionQrPng(id: string): Promise<Buffer> {
     throw new HttpError(404, "Session not found.");
   }
 
-  return QRCode.toBuffer(buildQrUrl(session.qrToken), { type: "png" });
+  // 'H' error correction + a larger raster size so the code still scans
+  // reliably when projected on a screen or printed on a flyer.
+  return QRCode.toBuffer(buildQrUrl(session.qrToken), {
+    type: "png",
+    errorCorrectionLevel: "H",
+    width: 640,
+  });
 }
 
 export async function closeSession(id: string) {

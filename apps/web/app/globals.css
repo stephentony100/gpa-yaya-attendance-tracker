@@ -9,3 +9,28 @@ body {
   background: var(--bg-page);
   font-family: var(--font-body);
 }
+
+.print-area {
+  display: none;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    display: flex !important;
+    position: fixed;
+    inset: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    padding: var(--space-8);
+    background: var(--bg-page);
+  }
+}

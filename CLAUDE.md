@@ -33,16 +33,18 @@ yaya-attendance/
 ## Tech stack — do not deviate from this
 
 ### Frontend (`apps/web`)
+
 - **Framework:** Next.js 14, App Router, TypeScript
 - **Styling:** Tailwind CSS v3 — theme extended via `docs/tailwind.tokens.js`
 - **Design tokens:** `docs/tokens.css` imported in `globals.css` — use CSS variables or Tailwind token classes, never hardcode colours or spacing
 - **Fonts:** Fraunces (display, 300/400 weights + italic) + Manrope (body/UI, 400/500/600) via Google Fonts
-- **QR scanning:** `html5-qrcode` library (member-facing scan page)
+- **QR scanning:** Not built in-app. Members scan the projected/printed QR using their phone's native camera app, which opens the `/checkin/[qr_token]` URL directly — no in-app scanner needed. A manual code-entry fallback exists for phones whose camera doesn't auto-detect QR codes (decided in Phase 6, see below).
 - **State:** React state + Context only — no Redux, no Zustand for v1
 - **HTTP client:** `fetch` with a typed wrapper — no axios
 - **Deployment:** Vercel
 
 ### Backend (`apps/api`)
+
 - **Runtime:** Node.js 20+
 - **Framework:** Express 5, TypeScript
 - **ORM:** Prisma
@@ -59,13 +61,13 @@ yaya-attendance/
 
 **Palette: Gold & Noir**
 
-| Role | Token | Hex |
-|---|---|---|
-| Primary / brand | `--bg-brand` | `#0D1B2A` |
-| Crown gold accent | `--bg-accent` | `#C9A84C` |
-| Page background | `--bg-page` | `#F8F4EE` |
-| Success (present) | `--text-success` | `#2D6A4F` |
-| Error (absent/alert) | `--text-error` | `#C0392B` |
+| Role                 | Token            | Hex       |
+| -------------------- | ---------------- | --------- |
+| Primary / brand      | `--bg-brand`     | `#0D1B2A` |
+| Crown gold accent    | `--bg-accent`    | `#C9A84C` |
+| Page background      | `--bg-page`      | `#F8F4EE` |
+| Success (present)    | `--text-success` | `#2D6A4F` |
+| Error (absent/alert) | `--text-error`   | `#C0392B` |
 
 - Display font: **Fraunces** — use only for emotional moments (welcome screen hero text, confirmation name). Nowhere else.
 - Body/UI font: **Manrope** — everything else.
@@ -89,6 +91,7 @@ Full Prisma schema to be generated in Phase 1. Core tables:
 ## API design — base URL prefix `/api/v1`
 
 ### Public (no auth required)
+
 - `GET  /checkin/:qr_token` — fetch session details for check-in page
 - `POST /checkin/:qr_token/register` — new member registration + mark attendance
 - `POST /checkin/:qr_token/mark` — returning member mark attendance (device token in header)
@@ -96,6 +99,7 @@ Full Prisma schema to be generated in Phase 1. Core tables:
 - `POST /members/:id/link-device` — relink member to new device token
 
 ### Admin (JWT required — `Authorization: Bearer <token>`)
+
 - `POST /admin/login`
 - `GET  /admin/event-types`
 - `POST /admin/event-types`
@@ -143,16 +147,16 @@ Full Prisma schema to be generated in Phase 1. Core tables:
 
 We build in phases. Complete each phase fully before moving to the next.
 
-| Phase | Scope |
-|---|---|
-| 1 | Project scaffold — monorepo setup, Prisma schema, env config, base Express app, Next.js app with tokens wired |
-| 2 | Backend — all public check-in API routes + member registration logic |
-| 3 | Backend — admin auth + all admin API routes |
-| 4 | Frontend — member check-in flow (registration form + returning member confirmation) |
-| 5 | Frontend — admin dashboard (login, sessions, QR display, attendance table + filters) |
-| 6 | QR generation (server-side) + QR scanning (client-side, html5-qrcode) |
-| 7 | Profile photo upload (Cloudinary) + CSV export |
-| 8 | Polish — loading states, error handling, empty states, mobile responsiveness audit |
+| Phase | Scope                                                                                                                                       |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Project scaffold — monorepo setup, Prisma schema, env config, base Express app, Next.js app with tokens wired                               |
+| 2     | Backend — all public check-in API routes + member registration logic                                                                        |
+| 3     | Backend — admin auth + all admin API routes                                                                                                 |
+| 4     | Frontend — member check-in flow (registration form + returning member confirmation)                                                         |
+| 5     | Frontend — admin dashboard (login, sessions, QR display, attendance table + filters)                                                        |
+| 6     | QR display polish (admin) + manual code-entry fallback (member) — no in-app camera scanning                                                 |
+| 7     | Profile photo upload (Cloudinary) — CSV export already shipped in Phase 5, not repeated here                                                |
+| 8     | Vitest setup + admin change-password endpoint + date-of-birth picker upgrade + loading/error/empty-state audit + mobile responsiveness pass |
 
 **Current phase: 1**
 
@@ -161,6 +165,7 @@ We build in phases. Complete each phase fully before moving to the next.
 ## Environment variables needed
 
 ### Backend (`apps/api/.env`)
+
 ```
 DATABASE_URL=
 JWT_SECRET=
@@ -171,9 +176,13 @@ CLOUDINARY_API_SECRET=
 PORT=3001
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
+TZ=Africa/Lagos
 ```
 
+`TZ=Africa/Lagos` must be set on the Render service before the first production deploy (there is no `render.yaml` in this repo — set it manually in the Render dashboard's environment variables). This is defense-in-depth, not the primary fix for session-expiry correctness: `expiresAt` is computed host-timezone-independently via `endOfDayLagos()` (`apps/api/src/lib/datetime.ts`), so it's correct even without this var. `TZ` only protects any other code path, log timestamp, or future cron-adjacent behavior that might naively rely on local time.
+
 ### Frontend (`apps/web/.env.local`)
+
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
 ```
@@ -183,6 +192,7 @@ NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
 ## What the YAYA logo looks like
 
 The YAYA crest is a heraldic emblem with:
+
 - A royal crown at the top
 - Gold laurel wreath frame
 - Central shield in cobalt blue with four quadrants (dove, praying hands, open bible, sword)

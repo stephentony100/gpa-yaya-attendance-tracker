@@ -24,3 +24,5 @@ adminRouter.get("/admin/attendance", asyncHandler(adminController.listAttendance
 adminRouter.get("/admin/attendance/export", asyncHandler(adminController.exportAttendance));
 
 adminRouter.get("/admin/members", asyncHandler(adminController.listMembers));
+
+adminRouter.put("/admin/change-password", asyncHandler(adminController.changePassword));

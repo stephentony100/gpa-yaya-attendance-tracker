@@ -15,7 +15,14 @@ const REQUIRED_VARS = [
 
 type RequiredVar = (typeof REQUIRED_VARS)[number];
 
-function loadEnv(): Record<RequiredVar, string> {
+interface Env extends Record<RequiredVar, string> {
+  TEST_DATABASE_URL?: string;
+  // The connection string the app should actually use: TEST_DATABASE_URL
+  // when NODE_ENV=test, DATABASE_URL otherwise. Never falls back silently.
+  RESOLVED_DATABASE_URL: string;
+}
+
+function loadEnv(): Env {
   const missing: string[] = [];
   const values = {} as Record<RequiredVar, string>;
 
@@ -34,7 +41,24 @@ function loadEnv(): Record<RequiredVar, string> {
     );
   }
 
-  return values;
+  let resolvedDatabaseUrl = values.DATABASE_URL;
+
+  if (values.NODE_ENV === "test") {
+    if (!process.env.TEST_DATABASE_URL) {
+      throw new Error(
+        "NODE_ENV=test but TEST_DATABASE_URL is not set. Refusing to fall back to the " +
+          "production DATABASE_URL — set TEST_DATABASE_URL to a dedicated test database " +
+          "before running tests or test/seed scripts."
+      );
+    }
+    resolvedDatabaseUrl = process.env.TEST_DATABASE_URL;
+  }
+
+  return {
+    ...values,
+    TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
+    RESOLVED_DATABASE_URL: resolvedDatabaseUrl,
+  };
 }
 
 export const env = loadEnv();

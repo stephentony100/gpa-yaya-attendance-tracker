@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import * as checkinService from "../services/checkin.service";
 import { serializeMemberPublic, serializeSessionPublic } from "../lib/serializers";
+import { HttpError } from "../lib/errors";
 
 function formatDate(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -27,6 +28,15 @@ export async function register(req: Request, res: Response) {
     },
     message: `Welcome, ${member.fullName} — you're marked present for ${session.eventType.name}, ${formatDate(session.date)}.`,
   });
+}
+
+export async function uploadPhoto(req: Request, res: Response) {
+  if (!req.file) {
+    throw new HttpError(400, "No image file provided.");
+  }
+
+  const photoUrl = await checkinService.uploadMemberPhoto(req.file.buffer);
+  res.json({ success: true, data: { photo_url: photoUrl } });
 }
 
 export async function mark(req: Request, res: Response) {

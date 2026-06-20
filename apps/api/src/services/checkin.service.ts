@@ -4,6 +4,8 @@ import type { Session, EventType } from "../generated/prisma/client";
 import { prisma } from "../lib/prisma";
 import { HttpError } from "../lib/errors";
 import { DEPARTMENTS, GENDERS, type GenderInput } from "../lib/constants";
+import { uploadImageBuffer } from "../lib/cloudinary";
+import { endOfDayLagos } from "../lib/datetime";
 
 type SessionWithEventType = Session & { eventType: EventType };
 
@@ -14,12 +16,6 @@ interface RegisterInput {
   dateOfBirth: Date;
   departments: string[];
   profilePhotoUrl?: string;
-}
-
-function endOfDay(date: Date): Date {
-  const d = new Date(date);
-  d.setHours(23, 59, 59, 999);
-  return d;
 }
 
 function startOfDay(date: Date): Date {
@@ -123,7 +119,7 @@ export async function registerMember(qrToken: string, body: unknown) {
   if (isExpiresAtUnset(session)) {
     session = await prisma.session.update({
       where: { id: session.id },
-      data: { expiresAt: endOfDay(session.date) },
+      data: { expiresAt: endOfDayLagos(session.date) },
       include: { eventType: true },
     });
   }
@@ -158,6 +154,14 @@ export async function registerMember(qrToken: string, body: unknown) {
   });
 
   return { member, attendance, session, deviceToken };
+}
+
+export async function uploadMemberPhoto(buffer: Buffer): Promise<string> {
+  try {
+    return await uploadImageBuffer(buffer);
+  } catch {
+    throw new HttpError(502, "Could not upload photo right now. You can continue without one.");
+  }
 }
 
 export async function markAttendance(qrToken: string, deviceToken: string) {

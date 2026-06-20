@@ -8,7 +8,7 @@ declare global {
   var __pgPool: Pool | undefined;
 }
 
-const pool = globalThis.__pgPool ?? new Pool({ connectionString: env.DATABASE_URL });
+const pool = globalThis.__pgPool ?? new Pool({ connectionString: env.RESOLVED_DATABASE_URL });
 
 if (process.env.NODE_ENV !== "production") {
   globalThis.__pgPool = pool;

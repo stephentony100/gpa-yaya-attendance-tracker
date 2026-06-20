@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 interface ErrorScreenProps {
   title: string;
   message: string;
@@ -36,6 +38,9 @@ export function ErrorScreen({ title, message, onRetry }: ErrorScreenProps) {
           Try again
         </button>
       )}
+      <Link href="/checkin" className="mt-4 font-body text-sm underline" style={{ color: "var(--text-link)" }}>
+        Can&apos;t scan? Enter code manually
+      </Link>
     </div>
   );
 }

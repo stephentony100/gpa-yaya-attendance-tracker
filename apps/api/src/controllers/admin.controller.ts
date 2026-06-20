@@ -113,3 +113,9 @@ export async function listMembers(req: Request, res: Response) {
   });
   res.json({ success: true, data: members.map(serializeMemberPublic) });
 }
+
+export async function changePassword(req: Request, res: Response) {
+  const { current_password, new_password } = req.body ?? {};
+  await adminService.changePassword(req.admin!.id, current_password, new_password);
+  res.json({ success: true, message: "Password updated." });
+}

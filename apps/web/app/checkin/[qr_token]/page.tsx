@@ -9,6 +9,8 @@ import { DepartmentPills } from "@/components/DepartmentPills";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Spinner } from "@/components/Spinner";
 import { ErrorScreen } from "@/components/ErrorScreen";
+import { PhotoPicker } from "@/components/PhotoPicker";
+import { DateOfBirthPicker } from "@/components/DateOfBirthPicker";
 
 const GENDERS: { value: Gender; label: string }[] = [
   { value: "MALE", label: "Male" },
@@ -52,6 +54,7 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
   const [recoveryPhone, setRecoveryPhone] = useState<string | null>(null);
   const [recoveryMember, setRecoveryMember] = useState<MemberLookup | null>(null);
@@ -149,6 +152,7 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
         gender: form.gender as Gender,
         date_of_birth: form.dateOfBirth,
         departments: form.departments,
+        ...(profilePhotoUrl ? { profile_photo_url: profilePhotoUrl } : {}),
       });
       setDeviceToken(data.device_token);
       setScreen({ kind: "confirmation", member: data.member, alreadyMarked: false });
@@ -354,12 +358,10 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
         </Field>
 
         <Field label="Date of birth" error={fieldErrors.date_of_birth}>
-          <input
-            type="date"
+          <DateOfBirthPicker
             value={form.dateOfBirth}
-            onChange={(e) => setForm((prev) => ({ ...prev, dateOfBirth: e.target.value }))}
-            className="h-12 w-full rounded-md px-3 font-body text-base"
-            style={inputStyle(Boolean(fieldErrors.date_of_birth))}
+            onChange={(value) => setForm((prev) => ({ ...prev, dateOfBirth: value }))}
+            hasError={Boolean(fieldErrors.date_of_birth)}
           />
         </Field>
 
@@ -367,23 +369,7 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
           <DepartmentPills selected={form.departments} onToggle={toggleDepartment} />
         </Field>
 
-        <div>
-          <span className="font-body text-sm" style={{ color: "var(--text-secondary)", fontWeight: "var(--weight-medium)" }}>
-            Profile photo (optional)
-          </span>
-          <button
-            type="button"
-            disabled
-            className="mt-2 flex h-11 w-full items-center justify-center rounded-md font-body text-sm"
-            style={{
-              background: "var(--btn-secondary-bg)",
-              border: "1px dashed var(--btn-secondary-border)",
-              color: "var(--text-tertiary)",
-            }}
-          >
-            Photo upload available soon
-          </button>
-        </div>
+        <PhotoPicker qrToken={qrToken} onPhotoUrlChange={setProfilePhotoUrl} />
 
         <button
           type="submit"

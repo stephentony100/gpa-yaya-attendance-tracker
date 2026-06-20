@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/prisma";
 
 const DEFAULT_ADMIN = {
-  name: "YAYA Admin",
+  name: "GPA YAYA Admin",
   email: "admin@gpa-yaya.com",
 };
 
