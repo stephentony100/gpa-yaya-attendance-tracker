@@ -315,6 +315,7 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
             type="text"
             value={form.fullName}
             onChange={(e) => setForm((prev) => ({ ...prev, fullName: e.target.value }))}
+            aria-label="Full name"
             className="h-12 w-full rounded-md px-3 font-body text-base"
             style={inputStyle(Boolean(fieldErrors.full_name))}
             placeholder="e.g. Emeka Okafor"
@@ -326,6 +327,7 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
             type="tel"
             value={form.phoneNumber}
             onChange={(e) => setForm((prev) => ({ ...prev, phoneNumber: e.target.value }))}
+            aria-label="Phone number"
             className="h-12 w-full rounded-md px-3 font-body text-base"
             style={inputStyle(Boolean(fieldErrors.phone_number))}
             placeholder="e.g. +2348012345678"
@@ -421,7 +423,7 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <label className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5">
       <span className="font-body text-sm" style={{ color: "var(--text-secondary)", fontWeight: "var(--weight-medium)" }}>
         {label}
       </span>
@@ -431,7 +433,7 @@ function Field({
           {error}
         </span>
       )}
-    </label>
+    </div>
   );
 }
 
