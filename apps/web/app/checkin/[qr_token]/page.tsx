@@ -10,7 +10,6 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Spinner } from "@/components/Spinner";
 import { ErrorScreen } from "@/components/ErrorScreen";
 import { PhotoPicker } from "@/components/PhotoPicker";
-import { DateOfBirthPicker } from "@/components/DateOfBirthPicker";
 
 const GENDERS: { value: Gender; label: string }[] = [
   { value: "MALE", label: "Male" },
@@ -315,7 +314,6 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
             type="text"
             value={form.fullName}
             onChange={(e) => setForm((prev) => ({ ...prev, fullName: e.target.value }))}
-            aria-label="Full name"
             className="h-12 w-full rounded-md px-3 font-body text-base"
             style={inputStyle(Boolean(fieldErrors.full_name))}
             placeholder="e.g. Emeka Okafor"
@@ -327,7 +325,6 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
             type="tel"
             value={form.phoneNumber}
             onChange={(e) => setForm((prev) => ({ ...prev, phoneNumber: e.target.value }))}
-            aria-label="Phone number"
             className="h-12 w-full rounded-md px-3 font-body text-base"
             style={inputStyle(Boolean(fieldErrors.phone_number))}
             placeholder="e.g. +2348012345678"
@@ -360,10 +357,12 @@ export default function CheckinPage({ params }: { params: { qr_token: string } }
         </Field>
 
         <Field label="Date of birth" error={fieldErrors.date_of_birth}>
-          <DateOfBirthPicker
+          <input
+            type="date"
             value={form.dateOfBirth}
-            onChange={(value) => setForm((prev) => ({ ...prev, dateOfBirth: value }))}
-            hasError={Boolean(fieldErrors.date_of_birth)}
+            onChange={(e) => setForm((prev) => ({ ...prev, dateOfBirth: e.target.value }))}
+            className="h-12 w-full rounded-md px-3 font-body text-base"
+            style={inputStyle(Boolean(fieldErrors.date_of_birth))}
           />
         </Field>
 
@@ -423,7 +422,7 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-1.5">
+    <label className="flex flex-col gap-1.5">
       <span className="font-body text-sm" style={{ color: "var(--text-secondary)", fontWeight: "var(--weight-medium)" }}>
         {label}
       </span>
@@ -433,7 +432,7 @@ function Field({
           {error}
         </span>
       )}
-    </div>
+    </label>
   );
 }
 
